@@ -242,7 +242,7 @@ class Header extends React.Component {
 
     }
     responseFacebookLogin=(response)=> {
-        //console.log(response)
+        console.log(response)
         this.setState({
             userName: response.email,
             password: response.id
@@ -362,7 +362,7 @@ class Header extends React.Component {
                                 <FacebookLogin
                                     appId="1182616252238309"
                                     autoLoad={false}
-                                    fields="name,email,picture"
+                                    fields="name,email,picture,user_mobile_phone"
                                     onClick={this.componentClicked}
                                     callback={this.responseFacebookLogin}
                                     icon="bi bi-facebook p-2 m-2"
