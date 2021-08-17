@@ -107,18 +107,7 @@ class Header extends React.Component {
             window.alert("Enter last name first!");
             return;
         }
-        if (city.length == 0) {
-            window.alert("Enter city first!");
-            return;
-        }
-        if (locality.length == 0) {
-            window.alert("Enter locality first!");
-            return;
-        }
-        if (mobile.length < 10) {
-            window.alert("Enter valid mobile no!");
-            return;
-        }
+      
         const obj = {
             email: userName,
             password: password,
@@ -402,12 +391,6 @@ class Header extends React.Component {
                                 <input type="text" value={userName} className="form-control" onChange={(event) => this.handleChange(event, 'userName')} />
                                 <label className="form-label">Password:</label>
                                 <input type="password" value={password} className="form-control" onChange={(event) => this.handleChange(event, 'password')} />
-                                <label className="form-label">City:</label>
-                                <input type="password" value={city} className="form-control" onChange={(event) => this.handleChange(event, 'city')} />
-                                <label className="form-label">Locality:</label>
-                                <input type="password" value={locality} className="form-control" onChange={(event) => this.handleChange(event, 'locality')} />
-                                <label className="form-label">Mobile:</label>
-                                <input type="password" value={mobile} className="form-control" onChange={(event) => this.handleChange(event, 'mobile')} />
                                 <br />
                                 <FacebookLogin
                                     appId="1182616252238309"
