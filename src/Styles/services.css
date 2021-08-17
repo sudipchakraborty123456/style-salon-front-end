@@ -1,0 +1,25 @@
+*{
+    font-family: 'Reem Kufi',sans-serif;   
+}
+.services span{
+    width: auto;
+    font-size: 38px;
+}
+.services{
+    display: flex;
+    justify-content: center;
+    font-family: 'Reem Kufi', sans-serif;
+    font-size: 25px;
+    margin-top: 10px;
+}
+.images{
+    height:40vh;
+    border-radius: 10px;;
+}
+ul {
+    list-style-image: url(../Images/yBullet.png);
+}
+.heading{
+    font-weight: bold;
+    font-size: 23px;
+}

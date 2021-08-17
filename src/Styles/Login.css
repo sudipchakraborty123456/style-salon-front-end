@@ -1,0 +1,33 @@
+.insideBox{
+    width: 80%;
+    margin: 0 auto;
+    /* height: 80%; */
+    /* display: flex; */
+    padding: 6%;
+    /* align-items: center; */
+}
+.outsideBox{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.facebook{
+    background-color: #1877f2;
+    border: none;
+    border-radius: 6px;
+    font-size: 20px;
+    line-height: 48px;
+    padding: 0 16px;
+    width: 100%;
+    color: white;
+}
+.google{
+    opacity: 1 !important;
+    width: 100%;
+    color: black !important;
+    letter-spacing: 1px;
+    border-radius: 5px !important;
+    text-align: center;
+    font-size: 18px !important;
+}

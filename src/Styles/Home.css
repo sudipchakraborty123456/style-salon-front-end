@@ -1,0 +1,35 @@
+
+.carousel img{
+  max-height:40vh;
+}
+.gents{
+  
+  height:40vh;
+  width: 80%;
+  margin:  5px 0 ;
+  border-radius: 10%;
+}
+.ladise{
+  height:40vh;
+  width: 80%;
+  margin:  5px 0 ;
+  border-radius: 10%;
+}
+.borderDesign{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  background-color: #ffffff;
+  border-radius:10px;
+}
+.borderDesign:hover{
+  box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}
+
+.quickSearchImages{
+  border-radius:20%;
+}
+.borderDesign:hover{
+  transform: scale(1.1);
+  cursor: pointer;
+}

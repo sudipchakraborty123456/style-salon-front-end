@@ -1,0 +1,155 @@
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: none;
+    background-color: antiquewhite;
+}
+
+/* .container {
+    height: 100%;
+} */
+
+.bookImage {
+    height: 400px;
+    width: 100%;
+    padding: 0;
+}
+
+.containerfluid {
+    padding: 0px !important;
+}
+
+h1 {
+    font-family: 'Reem Kufi', sans-serif;
+    font-style: bold;
+    /* font-size: x-large; */
+    font-weight: bold;
+    font-size: 33px;
+}
+
+p {
+    /* font-family: 'Caveat', cursive; */
+    font-size: 20px;
+    /* font-family: 'Roboto Mono', monospace; */
+    font-family: 'Reem Kufi', sans-serif;
+}
+
+i {
+    color: #d3af37;
+}
+
+.input {
+    border: none;
+}
+
+.bottomBorder {
+    border-bottom: 2px solid black;
+    text-align: left;
+    /* width: 80%; */
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.btn {
+    /* width: 200px; */
+    text-align: center;
+    background-color: #d3af37;
+    /* width: 20%; */
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    width: auto;
+}
+
+.fn {
+    font-family: Kaushan Script;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 48px;
+    line-height: 70px;
+    /* display: flex; */
+    align-items: center;
+    text-align: center;
+    text-transform: uppercase;
+    color: #FFFFFF;
+}
+
+.ln {
+    font-family: Kaushan Script;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 35px;
+    /* display: flex; */
+    align-items: center;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 12px;
+    color: #FFFFFF;
+}
+
+.buttomSection {
+    background-color: #d3af37;
+}
+
+.lastButtomSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+.callUs {
+    color: #d3af37;
+    font-size: 30px;
+    /* width: 153px; */
+    width: 100%;
+    font-weight: bold;
+}
+
+.mobNo {
+    font-size: 30px;
+    font-weight: bold;
+    color: black;
+    style: underline;
+}
+
+.callusMain {
+    display: flex;
+    justify-content: right;
+    align-items: right;
+}
+.selectBox {
+    position: relative;
+  }
+  
+  .selectBox select {
+    width: 100%;
+    font-weight: bold;
+  }
+  
+  .overSelect {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+  
+  #checkboxes {
+    display: none;
+    border: 1px #dadada solid;
+    position: absolute;
+    background-color: white;
+  }
+  
+  #checkboxes label {
+    display: block;
+  }
+  
+  #checkboxes label:hover {
+    background-color: #1e90ff;
+  }

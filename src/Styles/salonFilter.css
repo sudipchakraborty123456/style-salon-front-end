@@ -1,0 +1,35 @@
+
+.filter{
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+}
+.filterSection{
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+    background-color: #ffffff;
+}
+.salonDetails{
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+    background-color: #ffffff;
+}
+.paginationOptions{
+    text-align: center;
+    
+        height: 39px;
+    
+}
+.paginationButton{
+    /* width: 36px;
+    height: 36px;
+    margin: 0 13px 0 0; */
+    padding: 10.2px 13.5px 9.5px 14.3px;
+    opacity: 0.4;
+    border-radius: 7px;
+    border: solid 1px #8c96ab;
+    background-color: #ffffff;
+}
+.paginationButton:hover {
+    background-color: #8c96ab;
+    color: white;
+    cursor: pointer;
+}
