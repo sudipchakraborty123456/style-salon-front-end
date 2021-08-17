@@ -392,8 +392,8 @@ class Header extends React.Component {
                                 <label className="form-label">Mobile:</label>
                                 <input type="password" value={mobile} className="form-control" onChange={(event) => this.handleChange(event, 'mobile')} />
                                 <br />
-                                {/* <FacebookLogin
-                                    appId="4356797374331461"
+                                <FacebookLogin
+                                    appId="1182616252238309"
                                     autoLoad={false}
                                     fields="name,email,picture"
                                     onClick={this.componentClicked}
@@ -409,7 +409,7 @@ class Header extends React.Component {
                                     onFailure={this.responseFailureGoogle}
                                     cookiePolicy={'single_host_origin'}
                                     className="google"
-                                /> */}
+                                />
                                 <br />
                                 <br />
                                 <input type="button" className="btn btn-primary" onClick={this.handleSingUp} value="Sing Up" />
