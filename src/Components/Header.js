@@ -249,6 +249,23 @@ class Header extends React.Component {
         })
         this.handleLogin();
     }
+    responseFacebookSuingUp = (response) => {
+        //console.log(response)
+        if (response.status !== 'unknown') {
+            let name = response.name;
+            name = response.name.split(" ");
+            let fName = name[0];
+            let lName = name[1];
+            let email = response.email;
+            this.setState({
+                userName: email,
+                password: response.id,
+                firstName: fName,
+                lastName: lName
+            })
+            this.handleSingUp();
+        }
+    }
     render() {
         //debugger
         const {user, isLoginModalOpen, loginError, userName, password, isLoggedIn,isSingUpModalOpen,singUpError, firstName, lastName, city, locality, mobile } = this.state;
