@@ -201,7 +201,7 @@ class Header extends React.Component {
                         type: "client"
                     });
                     this.resetLoginForm();
-                    this.props.history.push("/salonAdmin");
+                    
                 } else {
                     localStorage.setItem("type", "salon");
                     this.setState({
@@ -211,6 +211,7 @@ class Header extends React.Component {
                         type: "salon"
                     });
                     this.resetLoginForm();
+                    this.props.history.push("/salonAdmin");
                 }
 
             }
