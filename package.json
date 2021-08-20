@@ -19,6 +19,7 @@
     "react-facebook-login": "^4.1.1",
     "react-google-login": "^5.2.2",
     "react-i18next": "^11.11.4",
+    "react-id-generator": "^3.0.1",
     "react-modal": "^3.14.3",
     "react-model": "^4.1.1",
     "react-responsive-carousel": "^3.2.18",

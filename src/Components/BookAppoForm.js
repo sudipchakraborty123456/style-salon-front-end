@@ -3,9 +3,33 @@ import { withRouter } from 'react-router-dom';
 import axios from "axios";
 import "../Styles/BookAppo.css"
 import validator from 'validator'
+import Modal from 'react-modal';
+import FacebookLogin from "react-facebook-login";
+import Googlelogin from "react-google-login";
+import nextId from "react-id-generator";
 const constants = require("../Constants");
 const API_URL = constants.API_URL;
-
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+    },
+};
+const customStyles1 = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        width:'54%'
+    },
+};
 class BookAppoForm extends React.Component {
     constructor(props) {
         super(props);
@@ -23,14 +47,23 @@ class BookAppoForm extends React.Component {
             expanded: false,
             selectedServices: [],
             name: "",
-            mobile:"",
-            email:"",
-            gender:null,
-            selectedSalonId:"",
-            date:null,
-            time:null,
-            totalPrice:0,
-            isLogin:false
+            mobile: "",
+            email: "",
+            gender: null,
+            selectedSalonId: "",
+            date: null,
+            time: null,
+            totalPrice: 0,
+            isLogin: false,
+            isLoginModalOpen: false,
+            loginError: null,
+            userName: "",
+            password: "",
+            firstName: "",
+            lastName: "",
+            isSingUpModalOpen: false,
+            singUpError: null,
+            isPlaceOrderModalOpen: false
         }
     }
     componentDidMount = () => {
@@ -81,7 +114,7 @@ class BookAppoForm extends React.Component {
                 })
 
                 //console.log(cityLocations);
-                               
+
 
 
             })
@@ -91,44 +124,44 @@ class BookAppoForm extends React.Component {
     }
     bookAppoClicked = () => {
         debugger
-        const {selectedSalonId, email, totalPrice, name,mobile,  date, time, selectedServices} =this.state
-        if(name.length == 0 ){
+        const { selectedSalonId, email, totalPrice, name, mobile, date, time, selectedServices } = this.state
+        if (name.length == 0) {
             window.alert("Enter name first!")
             return;
         }
-        if(name.length < 5){
+        if (name.length < 5) {
             window.alert("Name is too short!");
             return
         }
-        if(validator.isEmail(email) === false){
+        if (validator.isEmail(email) === false) {
             window.alert("Enter valid email !")
-          return
+            return
         }
-        if(email.length == 0 ){
+        if (email.length == 0) {
             window.alert("Enter email first!")
             return;
         }
-        if(mobile.length == 0 ){
+        if (mobile.length == 0) {
             window.alert("Enter mobile no first!")
             return;
         }
-        if(mobile.length < 10 ){
+        if (mobile.length < 10) {
             window.alert("Enter valid mobile no!")
             return;
         }
-        if(selectedSalonId.length == 0){
+        if (selectedSalonId.length == 0) {
             window.alert("Select Salon first!")
             return
         }
-        if(selectedServices.length == 0){
+        if (selectedServices.length == 0) {
             window.alert("Please select minimum one service!");
             return
         }
-        if(!date){
+        if (!date) {
             window.alert("please select appo date first!")
             return
         }
-        if(!time){
+        if (!time) {
             window.alert("please select appo time first!")
             return
         }
@@ -139,8 +172,38 @@ class BookAppoForm extends React.Component {
                 isLogin: true
             })
             console.log("login status changed!")
-        }else{
+            const reqData = {
+                userId: email,
+                salonId: selectedSalonId,
+                orderStatus: "placed",
+                totalPrice: totalPrice,
+                userName: name,
+                orderId: nextId(),
+                date: date,
+                time: time,
+                orderDetails: selectedServices
+            }
+            axios({
+                method: "POST",
+                url: `${API_URL}/placeOrder`,
+                //  headers : {"Content-Type" : "applicaton/json"},
+                data: reqData
+            })
+                .then(result => {
+                    //   debugger;
+                    this.setState({
+                        isPlaceOrderModalOpen: true
+                    })
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+        } else {
             window.alert("You have to login first!")
+            this.setState({
+                isLoginModalOpen: true
+            })
         }
     }
     citySelected = (event) => {
@@ -187,7 +250,7 @@ class BookAppoForm extends React.Component {
     getSalonByLocation = (id) => {
         //debugger;
         axios.get(`${API_URL}/getAllSalonByLocationId/${id}`).then(result => {
-           // debugger
+            // debugger
             this.setState({
                 salons: result.data.Salons
             })
@@ -220,10 +283,10 @@ class BookAppoForm extends React.Component {
             data: reqData
         })
             .then(result => {
-             //   debugger;
+                //   debugger;
                 this.setState({
                     salons: result.data.salons,
-                    gender:gender
+                    gender: gender
                 })
             })
             .catch(error => {
@@ -232,13 +295,13 @@ class BookAppoForm extends React.Component {
 
     }
     salonSelected = (e) => {
-      //  debugger
+        //  debugger
         const id = e.target.value;
         axios.get(`${API_URL}/getAllSalonById/${id}`).then(result => {
             debugger
             this.setState({
                 selectedSalon: result.data.salon[0],
-                selectedSalonId:result.data.salon[0]._id
+                selectedSalonId: result.data.salon[0]._id
             })
         }).catch(err => {
             console.log(err);
@@ -247,7 +310,7 @@ class BookAppoForm extends React.Component {
 
     }
     showCheckboxes = () => {
-       // debugger
+        // debugger
         if (this.state.expanded === true) {
             this.setState({
                 expanded: false
@@ -258,44 +321,205 @@ class BookAppoForm extends React.Component {
             })
         }
     }
-    serviceSelected = (e,p) => {
-       // debugger
+    serviceSelected = (e, p) => {
+        debugger
         let total = this.state.totalPrice;
-    
-        const selectedServices = this.state.selectedServices;
-        selectedServices.push(e.target.value)
-        total = total + p;
-        this.setState({
-            totalPrice : total
-        })
 
+        const selectedServices = this.state.selectedServices;
+        if (e.target.checked) {
+            let selectedServices = this.state.selectedServices
+            selectedServices.push(e.target.value)
+            total = total + p;
+            this.setState({
+                totalPrice: total,
+                selectedServices: selectedServices
+            })
+        }else{
+            let index = selectedServices.indexOf(e.target.value)
+            if(index != -1){
+                selectedServices.splice(index,1)
+                total = total-p
+                this.setState({
+                    totalPrice: total,
+                    selectedServices: selectedServices
+                })
+            }
+        }
     }
     nameChanged = (e) => {
         this.setState({ name: e.target.value })
     }
-    mobileChanged=(e)=>{
+    mobileChanged = (e) => {
         this.setState({
-            mobile:e.target.value
+            mobile: e.target.value
         })
     }
-    emailChanged=(e)=>{
+    emailChanged = (e) => {
         this.setState({
-            email:e.target.value
+            email: e.target.value
         })
     }
-    dataChanged=(e)=>{
+    dataChanged = (e) => {
         this.setState({
-            date:e.target.value
+            date: e.target.value
         })
     }
-    timeChanged=(e)=>{
-       // debugger
+    timeChanged = (e) => {
+        // debugger
         this.setState({
-            time:e.target.value
+            time: e.target.value
+        })
+    }
+    handelSingUpButtonClicked = () => {
+        this.setState({
+            isSingUpModalOpen: true,
+            isLoginModalOpen: false
+        });
+    }
+    handleChange = (event, field) => {
+        this.setState({
+            [field]: event.target.value,
+            loginError: undefined
+        });
+    }
+    handleSingUp = () => {
+        const { userName, password, firstName, lastName, city, locality, mobile } = this.state;
+        if (userName.length == 0) {
+            window.alert("Enter email first!")
+            return;
+        }
+        if (password.length == 0) {
+            window.alert("Enter password first!");
+            return;
+        }
+        if (firstName.length == 0) {
+            window.alert("Enter first name first!");
+            return;
+        }
+        if (lastName.length == 0) {
+            window.alert("Enter last name first!");
+            return;
+        }
+
+        const obj = {
+            email: userName,
+            password: password,
+            firstName: firstName,
+            lastName: lastName,
+            city: city,
+            locality: locality,
+            mobile: mobile
+        }
+        axios({
+            method: 'POST',
+            url: `${API_URL}/signUp`,
+            header: { 'Content-Type': 'application/json' },
+            data: obj
+        }).then(result => {
+            //debugger
+            if (result.data.data == "Use another email") {
+                window.alert("This email is already used, try with another email")
+                return;
+            }
+            localStorage.setItem("user", JSON.stringify(result.data.user));
+            localStorage.setItem("isLoggedIn", true);
+            this.setState({
+                user: result.data.user,
+                isLoggedIn: true,
+                loginError: undefined,
+                singUpError: undefined
+            });
+            this.resetSingUpForm();
+        }).catch(error => {
+            this.setState({
+                singUpError: 'Error in SingUp !!'
+            });
+            console.log(error);
+        });
+    }
+
+    resetSingUpForm = () => {
+        this.setState({
+            isSingUpModalOpen: false,
+            username: '',
+            password: '',
+            firstName: "",
+            lastName: "",
+            city: "",
+            locality: "",
+            mobile: "",
+            singUpError: undefined
+        });
+    }
+    handleLogin = () => {
+        //  debugger
+        const { userName, password, isLoggedIn } = this.state;
+        if (userName.length == 0) {
+            window.alert("Enter email first!")
+            return;
+        }
+        if (password.length == 0) {
+            window.alert("Enter password first!")
+            return;
+        }
+        const obj = {
+            email: userName,
+            password: password
+        }
+        axios({
+            method: 'POST',
+            url: `${API_URL}/login`,
+            header: { 'Content-Type': 'application/json' },
+            data: obj
+        }).then(result => {
+            if (result.data.data == "This email is not exist") {
+                this.setState({
+                    loginError: 'This email is not exist, You have to signUp first !!'
+                });
+                return;
+            } else {
+                localStorage.setItem("user", JSON.stringify(result.data.user[0]));
+                localStorage.setItem("isLoggedIn", true);
+                this.setState({
+                    user: result.data.user[0],
+                    isLoggedIn: true,
+                    loginError: undefined
+                });
+                this.resetLoginForm();
+            }
+        }).catch(error => {
+            this.setState({
+                loginError: 'Password is wrong !!'
+            });
+            console.log(error);
+        });
+    }
+
+    logout = () => {
+        //debugger;
+        localStorage.removeItem("user");
+        localStorage.removeItem("isLoggedIn");
+        this.setState({
+            user: undefined,
+            isLoggedIn: false
+        });
+    }
+
+    resetLoginForm = () => {
+        this.setState({
+            isLoginModalOpen: false,
+            userName: '',
+            password: '',
+            loginError: undefined
+        });
+    }
+    placeOrderClose = () => {
+        this.setState({
+            isPlaceOrderModalOpen: false
         })
     }
     render() {
-        const { selectedSalon, cityes, selectedCityLocations, salons, expanded } = this.state;
+        const { selectedSalon, cityes, isPlaceOrderModalOpen,totalPrice, selectedCityLocations, salons, expanded, isLoginModalOpen, loginError, userName, password, isSingUpModalOpen, singUpError, firstName, lastName } = this.state;
         return (
             <div className="container-fluid my-5 mx-0 " style={{ backgroundColor: ' rgb(238,238,238)' }}>
                 <div className="row text-center py-3">
@@ -312,11 +536,11 @@ class BookAppoForm extends React.Component {
                         </div>
                         <div className="bottomBorder">
                             <span><i class="material-icons">call</i></span>
-                            <input type="number" placeholder="Contact" className="input " onChange={(e)=>this.mobileChanged(e)}/>
+                            <input type="number" placeholder="Contact" className="input " onChange={(e) => this.mobileChanged(e)} />
                         </div>
                         <div className="bottomBorder">
                             <span><i class="material-icons">email</i></span>
-                            <input type="email" placeholder="Email Id" className="input " onChange={(e)=>this.emailChanged(e)}/>
+                            <input type="email" placeholder="Email Id" className="input " onChange={(e) => this.emailChanged(e)} />
                         </div>
                         <div className="row">
                             <div className="bottomBorder text-center text-center col-12 col-sm-12 col-mg-4 col-lg-4">
@@ -382,7 +606,7 @@ class BookAppoForm extends React.Component {
                                                                     item.service.map((item, index) => {
                                                                         return (
 
-                                                                            <label className="d-block"><input type="checkBox" key={index} value={item.name}  onChange={(e) => this.serviceSelected(e,item.price)} />{item.name}(&#x20b9; {item.price})</label>
+                                                                            <label className="d-block"><input type="checkBox" key={index} value={item.name} onChange={(e) => this.serviceSelected(e, item.price)} />{item.name}(&#x20b9; {item.price})</label>
 
 
                                                                         )
@@ -390,6 +614,8 @@ class BookAppoForm extends React.Component {
 
                                                                 }
                                                             </ul>
+                                                            <hr/>
+                                                            <a>Total:{totalPrice}</a>
                                                         </span>
                                                     )
 
@@ -405,17 +631,106 @@ class BookAppoForm extends React.Component {
                         </div>
                         <div className="bottomBorder">
                             <span><i class="material-icons">event</i></span>
-                            <input type="date" placeholder="Preferred Date" className="input " onChange={(e)=>this.dataChanged(e)}/>
+                            <input type="date" placeholder="Preferred Date" className="input " onChange={(e) => this.dataChanged(e)} />
                         </div>
                         <div className="bottomBorder">
                             <span><i class="material-icons">schedule</i></span>
-                            <label>Time<input type="time" min="07:00" max="22:00" onChange={(e)=>this.timeChanged(e)} /></label>
+                            <label>Time<input type="time" min="07:00" max="22:00" onChange={(e) => this.timeChanged(e)} /></label>
                         </div>
                     </div>
                 </div>
                 <div className="row text-center lastButtomSection">
                     <div className="row lastButtomSection">
-                        <button className="btn" onClick={()=>this.bookAppoClicked()} >Book Appointment</button>
+                        <button className="btn" onClick={() => this.bookAppoClicked()} >Book Appointment</button>
+
+                        <Modal isOpen={isLoginModalOpen} style={customStyles} >
+                            <h3>User Login</h3>
+                            <form>
+                                {
+                                    loginError ? <div className="alert alert-danger">{loginError}</div> : null
+                                }
+                                <label className="form-label">Username:</label>
+                                <input type="text" value={userName} className="form-control" onChange={(event) => this.handleChange(event, 'userName')} />
+                                <br />
+                                <label className="form-label">Password:</label>
+                                <input type="password" value={password} className="form-control" onChange={(event) => this.handleChange(event, 'password')} />
+                                <br />
+                                <br />
+                                <FacebookLogin
+                                    appId="1182616252238309"
+                                    autoLoad={false}
+                                    fields="name,email,picture"
+                                    onClick={this.componentClicked}
+                                    callback={this.responseFacebookLogin}
+                                    icon="bi bi-facebook p-2 m-2"
+                                    cssClass="fb"
+                                />
+                                <br />
+                                <Googlelogin
+                                    clientId="946053029267-3osdvlorecoptosi14vh65g4k982ncvi.apps.googleusercontent.com"
+                                    buttonText="Continue with Google"
+                                    onSuccess={this.responseSuccessGooglelogin}
+                                    onFailure={this.responseFailureGoogle}
+                                    cookiePolicy={'single_host_origin'}
+                                    className="google"
+                                />
+                                <br />
+                                <br />
+                                <input type="button" className="btn btn-primary" onClick={() => this.handleLogin()} value="Login" />
+                                <input type="button" className="btn" onClick={() => this.resetLoginForm()} value="Cancel" />
+                                <br />
+                                <hr />
+                                <div className="text-center">
+                                    <p className="dontHaveAccount">Don't have account? <a className="signUpA pointer" onClick={() => this.handelSingUpButtonClicked()}>SignUp</a></p>
+                                </div>
+                            </form>
+                        </Modal>
+                        <Modal isOpen={isSingUpModalOpen} style={customStyles}>
+                            <h3>User Singup</h3>
+                            <form>
+                                {
+                                    singUpError ? <div className="alert alert-danger">{singUpError}</div> : null
+                                }
+                                <label className="form-label">First Name:</label>
+                                <input type="text" value={firstName} className="form-control" onChange={(event) => this.handleChange(event, 'firstName')} />
+                                <label className="form-label">Last Name:</label>
+                                <input type="text" value={lastName} className="form-control" onChange={(event) => this.handleChange(event, 'lastName')} />
+                                <label className="form-label">email:</label>
+                                <input type="text" value={userName} className="form-control" onChange={(event) => this.handleChange(event, 'userName')} />
+                                <label className="form-label">Password:</label>
+                                <input type="password" value={password} className="form-control" onChange={(event) => this.handleChange(event, 'password')} />
+                                <br />
+                                <FacebookLogin
+                                    appId="1182616252238309"
+                                    autoLoad={false}
+                                    fields="name,email,picture"
+                                    onClick={this.componentClicked}
+                                    callback={this.responseFacebookSuingUp}
+                                    icon="bi bi-facebook p-2 m-2"
+                                    cssClass="fb"
+                                />
+                                <br />
+                                <Googlelogin
+                                    clientId="946053029267-3osdvlorecoptosi14vh65g4k982ncvi.apps.googleusercontent.com"
+                                    buttonText="Continue with Google"
+                                    onSuccess={this.responseSuccessGoogle}
+                                    onFailure={this.responseFailureGoogle}
+                                    cookiePolicy={'single_host_origin'}
+                                    className="google"
+                                />
+                                <br />
+                                <br />
+                                <input type="button" className="btn btn-primary" onClick={this.handleSingUp} value="Sing Up" />
+                                <input type="button" className="btn" onClick={this.resetSingUpForm} value="Cancel" />
+                                <br />
+                                <hr />
+                                <p className="dontHaveAccount">Already have an account? <a className="signUpA pointer" onClick={() => this.loginClicked()}>Login</a></p>
+                            </form>
+                        </Modal>
+                        <Modal isOpen={isPlaceOrderModalOpen} style={customStyles1}>
+                            <a onClick={() => this.placeOrderClose()} style={{float:"right"}}>+</a>
+                            <p>We send your booking request to salon provider, If they comfirm your booking then we send you a payment link, you have to payment there</p>
+                        </Modal>
                     </div>
 
                     <p>OR</p>

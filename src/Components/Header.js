@@ -11,47 +11,53 @@ const constants = require("../Constants");
 const API_URL = constants.API_URL;
 const customStyles = {
     content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
     },
-  };
+};
 class Header extends React.Component {
     constructor(props) {
         super();
         this.state = {
             a: "",
-            isLoginModalOpen:false,
-            userName:"",
-            password:"",
-            loginError:null,
-            user:null,
-            isLoggedIn:false,
-            isSingUpModalOpen:false,
-            singUpError:null,
-            firstName:"",
-            lastName:"",
-            city:"",
-            locality:"",
-            mobile:""
+            isLoginModalOpen: false,
+            userName: "",
+            password: "",
+            loginError: null,
+            user: null,
+            isLoggedIn: false,
+            isSingUpModalOpen: false,
+            singUpError: null,
+            firstName: "",
+            lastName: "",
+            city: "",
+            locality: "",
+            mobile: "",
+            type: ""
         }
     }
     componentDidMount() {
         const initialPath = this.props.history;
-        
+
         const isLoggedIn = localStorage.getItem("isLoggedIn");
         let user = localStorage.getItem("user");
+       let type= localStorage.getItem("type")
         if (user) {
             user = JSON.parse(user);
         }
-        if(isLoggedIn){
+        if(type === "salon"){
+            this.props.history.push("/salonAdmin");
+        }
+        if (isLoggedIn) {
             this.setState({
-            user: user,
-            isLoggedIn: isLoggedIn
-        })}else{
+                user: user,
+                isLoggedIn: isLoggedIn
+            })
+        } else {
 
         }
     }
@@ -67,8 +73,8 @@ class Header extends React.Component {
 
     loginClicked = () => {
         this.setState({
-            isLoginModalOpen : true,
-            isSingUpModalOpen:false
+            isLoginModalOpen: true,
+            isSingUpModalOpen: false
         })
     }
     salonFinder = () => {
@@ -80,7 +86,7 @@ class Header extends React.Component {
     ladiesServiceClicked = () => {
         this.props.history.push("/service/ladies")
     }
-    registerSalonClicked=()=>{
+    registerSalonClicked = () => {
         this.props.history.push("/registerSalon")
     }
     handleChange = (event, field) => {
@@ -90,7 +96,7 @@ class Header extends React.Component {
         });
     }
     handleSingUp = () => {
-        const { userName, password, firstName, lastName,city,locality, mobile } = this.state;
+        const { userName, password, firstName, lastName } = this.state;
         if (userName.length == 0) {
             window.alert("Enter email first!")
             return;
@@ -107,15 +113,13 @@ class Header extends React.Component {
             window.alert("Enter last name first!");
             return;
         }
-      
+
         const obj = {
             email: userName,
             password: password,
             firstName: firstName,
             lastName: lastName,
-            city:city,
-            locality:locality,
-            mobile:mobile
+            type:"client"
         }
         axios({
             method: 'POST',
@@ -152,14 +156,14 @@ class Header extends React.Component {
             password: '',
             firstName: "",
             lastName: "",
-            city:"",
-            locality:"",
-            mobile:"",
+            city: "",
+            locality: "",
+            mobile: "",
             singUpError: undefined
         });
     }
     handleLogin = () => {
-       //  debugger
+        //  debugger
         const { userName, password, isLoggedIn } = this.state;
         if (userName.length == 0) {
             window.alert("Enter email first!")
@@ -187,12 +191,28 @@ class Header extends React.Component {
             } else {
                 localStorage.setItem("user", JSON.stringify(result.data.user[0]));
                 localStorage.setItem("isLoggedIn", true);
-                this.setState({
-                    user: result.data.user[0],
-                    isLoggedIn: true,
-                    loginError: undefined
-                });
-                this.resetLoginForm();
+                debugger
+                if (result.data.user[0].type === "client") {
+                    localStorage.setItem("type", "client");
+                    this.setState({
+                        user: result.data.user[0],
+                        isLoggedIn: true,
+                        loginError: undefined,
+                        type: "client"
+                    });
+                    this.resetLoginForm();
+                    this.props.history.push("/salonAdmin");
+                } else {
+                    localStorage.setItem("type", "salon");
+                    this.setState({
+                        user: result.data.user[0],
+                        isLoggedIn: true,
+                        loginError: undefined,
+                        type: "salon"
+                    });
+                    this.resetLoginForm();
+                }
+
             }
         }).catch(error => {
             this.setState({
@@ -203,12 +223,14 @@ class Header extends React.Component {
     }
 
     logout = () => {
-        //debugger;
+        debugger;
         localStorage.removeItem("user");
         localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("type");
         this.setState({
             user: undefined,
-            isLoggedIn: false
+            isLoggedIn: false,
+            type:""
         });
     }
 
@@ -226,11 +248,11 @@ class Header extends React.Component {
             isLoginModalOpen: false
         });
     }
-    componentClicked=()=>{
+    componentClicked = () => {
         console.log("Clicked!")
 
     }
-    responseFacebookLogin=(response)=> {
+    responseFacebookLogin = (response) => {
         //console.log(response)
         this.setState({
             userName: response.email,
@@ -257,15 +279,15 @@ class Header extends React.Component {
     }
     render() {
         //debugger
-        const {user, isLoginModalOpen, loginError, userName, password, isLoggedIn,isSingUpModalOpen,singUpError, firstName, lastName, city, locality, mobile } = this.state;
+        const { user, isLoginModalOpen, loginError, userName, password, isLoggedIn, isSingUpModalOpen, singUpError, firstName, lastName, city, locality, mobile } = this.state;
         return (
 
             <div className="header container-fluid row">
-               
 
-               
 
-                
+
+
+
                 <div className="leftSection col-12 col-sm-12 col-mg-3 col-lg-3 text-center my-2"  >
                     <span id="fn" onClick={this.logoClick}>STYLE</span>
                     <br />
@@ -296,7 +318,7 @@ class Header extends React.Component {
                                 </svg></span>
                             </div>
                         </div>
-                   
+
                     </div>
                     <div className="row">
                         <Navbar className="container" collapseOnSelect expand="lg" variant="dark" className="navBar" sticky="top" >
@@ -325,12 +347,12 @@ class Header extends React.Component {
                                     <NavDropdown.Divider className="dropdown-deviders" style={{ color: "white" }} />
                                     {
                                         isLoggedIn === false
-                                        ?
-                                        <Nav.Link href="#" className="pages" onClick={()=>this.loginClicked()}>LogIn</Nav.Link>
-                                        :
-                                        <Nav.Link href="#" className="pages" onClick={()=>this.logout()}>{user.firstName}</Nav.Link>
+                                            ?
+                                            <Nav.Link href="#" className="pages" onClick={() => this.loginClicked()}>LogIn</Nav.Link>
+                                            :
+                                            <Nav.Link href="#" className="pages" onClick={() => this.logout()}>{user.firstName}</Nav.Link>
                                     }
-                                   
+
                                 </Nav>
 
                             </Navbar.Collapse>
@@ -368,8 +390,8 @@ class Header extends React.Component {
                                 />
                                 <br />
                                 <br />
-                                <input type="button" className="btn btn-primary" onClick={()=>this.handleLogin()} value="Login" />
-                                <input type="button" className="btn" onClick={()=>this.resetLoginForm()} value="Cancel" />
+                                <input type="button" className="btn btn-primary" onClick={() => this.handleLogin()} value="Login" />
+                                <input type="button" className="btn" onClick={() => this.resetLoginForm()} value="Cancel" />
                                 <br />
                                 <hr />
                                 <div className="text-center">
@@ -416,7 +438,7 @@ class Header extends React.Component {
                                 <input type="button" className="btn" onClick={this.resetSingUpForm} value="Cancel" />
                                 <br />
                                 <hr />
-                                <p className="dontHaveAccount">Already have an account? <a className="signUpA pointer" onClick={()=>this.loginClicked()}>Login</a></p>
+                                <p className="dontHaveAccount">Already have an account? <a className="signUpA pointer" onClick={() => this.loginClicked()}>Login</a></p>
                             </form>
                         </Modal>
                     </div>

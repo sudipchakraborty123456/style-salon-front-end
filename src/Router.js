@@ -13,6 +13,7 @@ import registerSalon from "./Components/RegisterSalon";
 import QuickSearchFilterPage from "./Components/QuickSearchFilterPage"
 import {Route,BrowserRouter} from "react-router-dom";
 import { Component } from "react";
+import admin from "./Components/SalonAdminPage"
 
 
 import "./Styles/Header.css"
@@ -35,6 +36,7 @@ class Router extends Component {
             {/* <Buttom_Section/> */}
             <Route path="/quickSearchFilterPage" component={QuickSearchFilterPage}/>
             <Route path="/registerSalon" component={registerSalon}/> 
+            <Route path="/salonAdmin" component={admin}/> 
             </BrowserRouter>
         )
     }
