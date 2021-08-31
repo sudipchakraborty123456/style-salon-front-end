@@ -17,6 +17,8 @@ const customStyles = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
+        "overflow-y": "auto",
+        "max-height": "80%"
     },
 };
 class Header extends React.Component {
@@ -37,7 +39,10 @@ class Header extends React.Component {
             city: "",
             locality: "",
             mobile: "",
-            type: ""
+            type: "",
+            isMyProfileModalOpen: false,
+            isBookingDetailsOpen: false,
+            orders: null
         }
     }
     componentDidMount() {
@@ -45,11 +50,11 @@ class Header extends React.Component {
 
         const isLoggedIn = localStorage.getItem("isLoggedIn");
         let user = localStorage.getItem("user");
-       let type= localStorage.getItem("type")
+        let type = localStorage.getItem("type")
         if (user) {
             user = JSON.parse(user);
         }
-        if(type === "salon"){
+        if (type === "salon") {
             this.props.history.push("/salonAdmin");
         }
         if (isLoggedIn) {
@@ -119,7 +124,8 @@ class Header extends React.Component {
             password: password,
             firstName: firstName,
             lastName: lastName,
-            type:"client"
+            type: "client",
+            salonId: " "
         }
         axios({
             method: 'POST',
@@ -201,7 +207,7 @@ class Header extends React.Component {
                         type: "client"
                     });
                     this.resetLoginForm();
-                    
+
                 } else {
                     localStorage.setItem("type", "salon");
                     this.setState({
@@ -224,14 +230,14 @@ class Header extends React.Component {
     }
 
     logout = () => {
-        debugger;
+        //        debugger;
         localStorage.removeItem("user");
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("type");
         this.setState({
             user: undefined,
             isLoggedIn: false,
-            type:""
+            type: ""
         });
     }
 
@@ -278,9 +284,66 @@ class Header extends React.Component {
             this.handleSingUp();
         }
     }
+    responseSuccessGoogle = (response) => {
+        //debugger
+        let fName = response.profileObj.givenName;
+        let lName = response.profileObj.familyName;
+        let email = response.profileObj.email;
+        this.setState({
+            userName: email,
+            password: response.profileObj.googleId,
+            firstName: fName,
+            lastName: lName
+        })
+        this.handleSingUp();
+    }
+    responseSuccessGooglelogin = (response) => {
+        console.log(response)
+
+        this.setState({
+            userName: response.profileObj.email,
+            password: response.profileObj.googleId
+        })
+        this.handleLogin();
+    }
+    responseFailureGoogle = (response) => {
+        console.log(response)
+    }
+    myProfileClicked = () => {
+        this.setState({
+            isMyProfileModalOpen: true
+        })
+    }
+    closeMyProfile = () => {
+        this.setState({
+            isMyProfileModalOpen: false
+        })
+    }
+    bookingDetailsClicked = () => {
+        this.setState({
+            isBookingDetailsOpen: true
+        })
+        setTimeout(() => this.getOrder(), 0)
+    }
+    closeBookingDetails = () => {
+        this.setState({
+            isBookingDetailsOpen: false
+        })
+    }
+    getOrder = () => {
+        axios.get(`${API_URL}/getOrders/${this.state.user.email}`)
+            .then(result => {
+                this.setState({
+                    orders: result.data.data
+                })
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
     render() {
         //debugger
-        const { user, isLoginModalOpen, loginError, userName, password, isLoggedIn, isSingUpModalOpen, singUpError, firstName, lastName, city, locality, mobile } = this.state;
+        const { orders, user, isMyProfileModalOpen, isBookingDetailsOpen, isLoginModalOpen, loginError, userName, password, isLoggedIn, isSingUpModalOpen, singUpError, firstName, lastName, city, locality, mobile } = this.state;
         return (
 
             <div className="header container-fluid row">
@@ -351,13 +414,104 @@ class Header extends React.Component {
                                             ?
                                             <Nav.Link href="#" className="pages" onClick={() => this.loginClicked()}>LogIn</Nav.Link>
                                             :
-                                            <Nav.Link href="#" className="pages" onClick={() => this.logout()}>{user.firstName}</Nav.Link>
+
+
+                                            <NavDropdown title={user.firstName} id="collasible-nav-dropdown" className="pages">
+                                                <NavDropdown.Item href="#" onClick={() => this.myProfileClicked()} >My Profile</NavDropdown.Item>
+                                                <NavDropdown.Divider className="dropdown-deviders" />
+                                                <NavDropdown.Item onClick={() => this.bookingDetailsClicked()}>Booking Details</NavDropdown.Item>
+                                                <NavDropdown.Divider className="dropdown-deviders" />
+                                                <NavDropdown.Item href="#" onClick={() => this.logout()}>LogOut</NavDropdown.Item>
+
+                                            </NavDropdown>
                                     }
 
                                 </Nav>
 
                             </Navbar.Collapse>
                         </Navbar>
+                        <Modal isOpen={isMyProfileModalOpen} style={customStyles}>
+                            <div className="container">
+                                <div >
+                                    <button className=" btn btn-light" onClick={() => this.closeMyProfile()} className="btn btn-light closeBtn">&times;</button>
+                                </div>
+                                <div className="row">
+
+                                </div>
+                            </div>
+                        </Modal>
+                        <Modal isOpen={isBookingDetailsOpen} style={customStyles}>
+                            <div className="container">
+                                <div >
+                                    <button className=" btn btn-light" style={{ float: "right" }} onClick={() => this.closeBookingDetails()} className="btn btn-light closeBtn">&times;</button>
+                                </div>
+                                <div className="row">
+                                    <div className="">
+                                        <h2 className="text-center">Notification</h2>
+                                        {
+                                            orders
+                                                ?
+
+                                                orders.map((item, index) => {
+                                                    return (
+                                                        <div className="borderDesign">
+                                                            <div className="row m-3 p-3">
+                                                                <div className="col-3 text-center">
+                                                                    <h5>Date</h5>
+                                                                    <h7>Date : {item.date}</h7>
+                                                                    <h7>time : {item.time}</h7>
+                                                                </div>
+                                                                <div className="col-3">
+                                                                    <h5>Booking services Details</h5>
+                                                                    <ul>
+                                                                        {
+                                                                            item.orderDetails.map((item, index) => {
+                                                                                return (
+                                                                                    <li>{item}</li>
+                                                                                )
+                                                                            })
+                                                                        }
+                                                                    </ul>
+                                                                </div>
+                                                                <div className="col-3 text-center">
+                                                                    <h5>Payment</h5>
+                                                                    {
+                                                                        item.confirmBooking === "Accepted"
+                                                                            ?
+                                                                            <a>
+                                                                            <h7>Your booking was accepted, please complete payment</h7>
+                                                                            <button>Payment</button>
+                                                                            </a>
+                                                                            :
+                                                                            <h7>Waiting for your comfermation</h7>
+                                                                    }
+                                                                </div>
+                                                                <div className="col-3 text-center">
+                                                                    <h5>Booking Status</h5>
+                                                                    {
+                                                                        item.confirmBooking === "pending"
+                                                                            ?
+                                                                            <h7 style={{ color: "#ff9900" }}>Booking Pending</h7>
+                                                                            :
+                                                                            item.confirmBooking === "Accepted"
+                                                                                ?
+                                                                                <h7 style={{ color: "green" }}>Booking Accepted</h7>
+                                                                                :
+                                                                                <h7 style={{ color: "red" }}>Booking Deny</h7>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })
+                                                :
+                                                <a></a>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </Modal>
                         <Modal isOpen={isLoginModalOpen} style={customStyles} >
                             <h3>User Login</h3>
                             <form>
@@ -382,7 +536,7 @@ class Header extends React.Component {
                                 />
                                 <br />
                                 <Googlelogin
-                                    clientId="946053029267-3osdvlorecoptosi14vh65g4k982ncvi.apps.googleusercontent.com"
+                                    clientId="827275656835-l251d2eso8vvki69oociho33kq6s3ss6.apps.googleusercontent.com"
                                     buttonText="Continue with Google"
                                     onSuccess={this.responseSuccessGooglelogin}
                                     onFailure={this.responseFailureGoogle}
@@ -426,8 +580,8 @@ class Header extends React.Component {
                                 />
                                 <br />
                                 <Googlelogin
-                                    clientId="946053029267-3osdvlorecoptosi14vh65g4k982ncvi.apps.googleusercontent.com"
-                                    buttonText="Continue with Google"
+                                    clientId="827275656835-l251d2eso8vvki69oociho33kq6s3ss6.apps.googleusercontent.com"
+                                    buttonText="SignUp with Google"
                                     onSuccess={this.responseSuccessGoogle}
                                     onFailure={this.responseFailureGoogle}
                                     cookiePolicy={'single_host_origin'}

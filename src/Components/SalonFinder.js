@@ -290,7 +290,6 @@ class SalonFinder extends React.Component {
         setTimeout(() => this.filterSalons());
     }
     sortChanged = (e) => {
-        debugger;
         const sort = e.target.value;
         const sort1 = parseInt(sort);
         this.setState({
@@ -300,10 +299,10 @@ class SalonFinder extends React.Component {
     }
 
     subServicesClicked = (e) => {
-        debugger
+      //  debugger
         console.log(e.target.checked);
         if (e.target.checked === true) {
-            debugger
+           // debugger
             const subServices = this.state.subServices;
             subServices.push(parseInt(e.target.value));
             let uniqSubServices = [... new Set(subServices)];
@@ -312,7 +311,7 @@ class SalonFinder extends React.Component {
             })
             setTimeout(() => this.filterSalons(), 0)
         } else {
-            debugger
+           // debugger
             const subServices = this.state.subServices;
             const index = subServices.lastIndexOf(parseInt(e.target.value))
             subServices.splice(index,1)
@@ -324,7 +323,7 @@ class SalonFinder extends React.Component {
 
     }
     goToSalonDetails=(id)=>{
-        debugger
+        //debugger
         const url = `/details?id=${id}`;
         this.props.history.push(url);
     }

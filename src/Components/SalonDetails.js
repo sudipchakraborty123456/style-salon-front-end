@@ -15,7 +15,7 @@ class SalonDetails extends React.Component {
     }
     render() {
         const { item } = this.props
-        debugger
+       // debugger
         return (
 
             <div className="  p-3">

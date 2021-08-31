@@ -6,7 +6,7 @@ import validator from 'validator'
 import Modal from 'react-modal';
 import FacebookLogin from "react-facebook-login";
 import Googlelogin from "react-google-login";
-import nextId from "react-id-generator";
+import uuid from 'react-uuid'
 const constants = require("../Constants");
 const API_URL = constants.API_URL;
 const customStyles = {
@@ -67,6 +67,19 @@ class BookAppoForm extends React.Component {
         }
     }
     componentDidMount = () => {
+
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+        let user = localStorage.getItem("user");
+        if (user) {
+            user = JSON.parse(user);
+            this.setState({
+                user: user,
+                isLoggedIn: isLoggedIn,
+                email:user.email,
+                name:user.firstName
+            });
+        }
+       
         axios.get(`${API_URL}/getAllCity`)
             .then(result => {
                 //   debugger;
@@ -124,7 +137,7 @@ class BookAppoForm extends React.Component {
     }
     bookAppoClicked = () => {
         debugger
-        const { selectedSalonId, email, totalPrice, name, mobile, date, time, selectedServices } = this.state
+        const { selectedSalonId, email, totalPrice, name, mobile, date, time, selectedServices,user } = this.state
         if (name.length == 0) {
             window.alert("Enter name first!")
             return;
@@ -137,10 +150,10 @@ class BookAppoForm extends React.Component {
             window.alert("Enter valid email !")
             return
         }
-        if (email.length == 0) {
-            window.alert("Enter email first!")
-            return;
-        }
+        // if (email.length == 0) {
+        //     window.alert("Enter email first!")
+        //     return;
+        // }
         if (mobile.length == 0) {
             window.alert("Enter mobile no first!")
             return;
@@ -172,16 +185,20 @@ class BookAppoForm extends React.Component {
                 isLogin: true
             })
             console.log("login status changed!")
+            debugger
             const reqData = {
-                userId: email,
+                userId:email,
                 salonId: selectedSalonId,
                 orderStatus: "placed",
                 totalPrice: totalPrice,
                 userName: name,
-                orderId: nextId(),
+                orderId: uuid(),
                 date: date,
                 time: time,
-                orderDetails: selectedServices
+                orderDetails: selectedServices,
+                payment:false,
+                confirmBooking:"pending",
+                mobile:mobile
             }
             axios({
                 method: "POST",
@@ -298,7 +315,7 @@ class BookAppoForm extends React.Component {
         //  debugger
         const id = e.target.value;
         axios.get(`${API_URL}/getAllSalonById/${id}`).then(result => {
-            debugger
+//            debugger
             this.setState({
                 selectedSalon: result.data.salon[0],
                 selectedSalonId: result.data.salon[0]._id
@@ -322,7 +339,7 @@ class BookAppoForm extends React.Component {
         }
     }
     serviceSelected = (e, p) => {
-        debugger
+     //   debugger
         let total = this.state.totalPrice;
 
         const selectedServices = this.state.selectedServices;
@@ -355,9 +372,9 @@ class BookAppoForm extends React.Component {
         })
     }
     emailChanged = (e) => {
-        this.setState({
-            email: e.target.value
-        })
+        // this.setState({
+        //     email: e.target.value
+        // })
     }
     dataChanged = (e) => {
         this.setState({
@@ -519,7 +536,7 @@ class BookAppoForm extends React.Component {
         })
     }
     render() {
-        const { selectedSalon, cityes, isPlaceOrderModalOpen,totalPrice, selectedCityLocations, salons, expanded, isLoginModalOpen, loginError, userName, password, isSingUpModalOpen, singUpError, firstName, lastName } = this.state;
+        const { selectedSalon, cityes, isPlaceOrderModalOpen,totalPrice, selectedCityLocations, salons, expanded, isLoginModalOpen, loginError, userName, password, isSingUpModalOpen, singUpError, firstName, lastName, user } = this.state;
         return (
             <div className="container-fluid my-5 mx-0 " style={{ backgroundColor: ' rgb(238,238,238)' }}>
                 <div className="row text-center py-3">
@@ -530,18 +547,18 @@ class BookAppoForm extends React.Component {
                 </div>
                 <div className="row text-center">
                     <div className="col-12 col-sm-12 col-lg-6 px-5">
-                        <div className="bottomBorder">
+                        {/* <div className="bottomBorder">
                             <span><i class="material-icons">person</i></span>
                             <input type="text" placeholder="Name" className="input " onChange={(e) => this.nameChanged(e)} />
-                        </div>
+                        </div> */}
                         <div className="bottomBorder">
                             <span><i class="material-icons">call</i></span>
                             <input type="number" placeholder="Contact" className="input " onChange={(e) => this.mobileChanged(e)} />
                         </div>
-                        <div className="bottomBorder">
+                        {/* <div className="bottomBorder">
                             <span><i class="material-icons">email</i></span>
                             <input type="email" placeholder="Email Id" className="input " onChange={(e) => this.emailChanged(e)} />
-                        </div>
+                        </div> */}
                         <div className="row">
                             <div className="bottomBorder text-center text-center col-12 col-sm-12 col-mg-4 col-lg-4">
                                 <span><i class="material-icons">location_on</i></span>
@@ -587,7 +604,7 @@ class BookAppoForm extends React.Component {
                         <div className="bottomBorder">
                             <div className="selectBox" >
                                 <span><i class="material-icons">content_cut</i></span>
-                                <div className="input " onClick={() => this.showCheckboxes()} style={{ display: "inline-block" }}>Select Services
+                                <div className="input "  style={{ display: "inline-block" }}><span onClick={() => this.showCheckboxes()}>Select Services <img src={require("../Images/downArrow.png").default}/></span>
 
                                 </div>
                             </div>

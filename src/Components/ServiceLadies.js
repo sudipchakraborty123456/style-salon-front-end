@@ -20,70 +20,79 @@ class ServiceLadies extends React.Component{
                     </div>
                     <div className="row my-5 mx-5">
                         <div className="col-12 col-sm-12 col-mg3 col-lg-3 text-center">
-                            <span className="heading">Hair Cut & Finish</span>
+                            <span className="heading">Hair Styling</span>
                             <ul className="list" style={{ textAlign: 'left' }}>
-                                <li>Cut and Hair Care</li>
+                                <li>Hair Cut</li>
+                                <li>Ironing</li>
+                                <li>Global Colouring</li>
+                                <li>Blow Dry</li>
+                                <li>Root Touch Up</li>
                                 <li>Shampoo & Conditioning</li>
-                                <li>Hair/Beard Colouring</li>
                                 <li>Head Massage</li>
-                                <li>Beard Styling</li>
+                                <li>Roller Setting</li>
+                                <li>Oiling</li>
                             </ul>
                         </div>
 
                         <div className="col-12 col-sm-12 col-mg3 col-lg-3 text-center">
-                            <span className="heading">Hair Colour</span>
+                            <span className="heading">Make Up</span>
                             <ul className="list" style={{ textAlign: 'left' }}>
-                                <li>Hi - Lites</li>
-                                <li>Hair Colour
-                                (Ammonia & Ammonia Free)</li>
-                                <li>Beard Colour</li>
+                                <li>Party Make Up</li>
+                                <li>Engagement Make Up</li>
+                                <li>Bridal & Reception Make Up</li>
+                                <li>Base Make Up</li>
+                                <li>Eye Make Up</li>
                             </ul>
                         </div>
 
                         <div className="col-12 col-sm-12 col-mg3 col-lg-3 text-center">
                             <span className="heading">Hair Texture</span>
                             <ul className="list" style={{ textAlign: 'left' }}>
-                                <li>Smoothening</li>
-                                <li>Straightening</li>
                                 <li>Rebonding</li>
                                 <li>Perming</li>
+                                <li>Keratin</li>
+                                <li>Colour Protection</li>
+                                <li>Smoothening</li>
                             </ul>
                         </div>
-
-                        <div className="col-12 col-sm-12 col-mg3 col-lg-3 text-center">
+                        <div className="col-12 com-sm-12 col-mg-3 col-lg-3 text-center">
                             <span className="heading">Hair Treatments</span>
                             <ul className="list" style={{ textAlign: 'left' }}>
-                                <li>Advanced Moisturising</li>
-                                <li>Hair Spa</li>
+                                <li>Spa Treatments</li>
+                                <li>Volumizing</li>
+                                <li>Advanced Hair Moisturising</li>
                                 <li>Scalp Treatments</li>
-                                <li>Colour Protection</li>
+                                <li>Hair Spa</li>
                             </ul>
                         </div>
+                        
                     </div>
                     <div className="row">
                         <img className="col-12 images" src={require("../Images/ladies1.jpg").default} alt="sorry!" />
                     </div>
                     <div className="row mx-5">
-                        <div className="col-12 col-sm-12 col-mg-6 col-lg-6 text-center">
-                            <span className="heading">Skin Care</span>
+                       
+                        <div className="col-12 com-sm-12 col-mg-6 col-lg-6 text-center">
+                            <span className="heading">Facials & Rituals</span>
                             <ul className="list" style={{ textAlign: 'left' }}>
+                                <li>Bleach</li>
+                                <li>Luxury Facials/Rituals</li>
                                 <li>Clean Ups</li>
-                                <li>Organic Treatments</li>
-                                <li>Facials</li>
-                                <li>Manicure</li>
-                                <li>Pedicure</li>
+                                <li>Body Polishing/Rejuvenation</li>
+                                <li>Threading</li>
                             </ul>
                         </div>
-                        <div className="col-12 col-sm-12 col-mg-6 col-lg-6 text-center">
-                            <span className="heading">Beard Grooming</span>
+                        <div className="col-12 com-sm-12 col-mg-6 col-lg-6 text-center">
+                            <span className="heading">Hand & Feet</span>
                             <ul className="list" style={{ textAlign: 'left' }}>
-                                <li>Beard Trim</li>
-                                <li>Beard Colour</li>
-                                <li>Beard Styling</li>
-                                <li>Shave</li>
-                                <li>Luxury Shave & Beard Spa</li>
+                                <li>Manicure</li>
+                                <li>Spa Pedicure</li>
+                                <li>Pedicure</li>
+                                <li>Waxing</li>
+                                <li>Spa Manicure</li>
                             </ul>
                         </div>
+                     
                     </div>
                     <div className="text-center my-5">
                         <button className="btn btn-light" onClick={()=>this.gentsServiceClicked()}>Gents Services</button>
