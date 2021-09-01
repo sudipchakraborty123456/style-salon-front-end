@@ -537,7 +537,7 @@ class Header extends React.Component {
                                 <br />
                                 <Googlelogin
                                     clientId="827275656835-l251d2eso8vvki69oociho33kq6s3ss6.apps.googleusercontent.com"
-                                    buttonText="Continue with Google"
+                                    buttonText="Login with Google"
                                     onSuccess={this.responseSuccessGooglelogin}
                                     onFailure={this.responseFailureGoogle}
                                     cookiePolicy={'single_host_origin'}
