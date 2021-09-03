@@ -37,6 +37,7 @@ class Router extends Component {
             <Route path="/quickSearchFilterPage" component={QuickSearchFilterPage}/>
             <Route path="/registerSalon" component={registerSalon}/> 
             <Route path="/salonAdmin" component={admin}/> 
+            {/* <Route path="/google4ff1f661a24a0d2e.html" component={google}/>  */}
             </BrowserRouter>
         )
     }

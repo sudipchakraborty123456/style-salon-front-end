@@ -9,7 +9,8 @@ class SalonAdminPage extends React.Component {
     constructor() {
         super();
         this.state = {
-            orders: []
+            orders: [],
+            a:null
         }
     }
     componentDidMount = () => {
@@ -32,7 +33,9 @@ class SalonAdminPage extends React.Component {
         axios.get(`${API_URL}/confiemBooking/${e.target.value}`)
             .then(result => {
 
-
+                this.setState({
+                    a:1
+                })
 
             })
             .catch(error => {
@@ -43,6 +46,9 @@ class SalonAdminPage extends React.Component {
         axios.get(`${API_URL}/denyBooking/${e.target.value}`)
         .then(result => {
 
+            this.setState({
+                a:1
+            })
 
 
         })

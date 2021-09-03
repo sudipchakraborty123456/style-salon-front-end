@@ -136,20 +136,9 @@ class BookAppoForm extends React.Component {
             });
     }
     bookAppoClicked = () => {
-        debugger
+       // debugger
         const { selectedSalonId, email, totalPrice, name, mobile, date, time, selectedServices,user } = this.state
-        if (name.length == 0) {
-            window.alert("Enter name first!")
-            return;
-        }
-        if (name.length < 5) {
-            window.alert("Name is too short!");
-            return
-        }
-        if (validator.isEmail(email) === false) {
-            window.alert("Enter valid email !")
-            return
-        }
+       
         // if (email.length == 0) {
         //     window.alert("Enter email first!")
         //     return;
@@ -503,6 +492,7 @@ class BookAppoForm extends React.Component {
                     loginError: undefined
                 });
                 this.resetLoginForm();
+                setTimeout(()=>this.bookAppoClicked(),0)
             }
         }).catch(error => {
             this.setState({
@@ -534,6 +524,7 @@ class BookAppoForm extends React.Component {
         this.setState({
             isPlaceOrderModalOpen: false
         })
+        this.props.history.push("/");
     }
     render() {
         const { selectedSalon, cityes, isPlaceOrderModalOpen,totalPrice, selectedCityLocations, salons, expanded, isLoginModalOpen, loginError, userName, password, isSingUpModalOpen, singUpError, firstName, lastName, user } = this.state;
@@ -745,7 +736,7 @@ class BookAppoForm extends React.Component {
                             </form>
                         </Modal>
                         <Modal isOpen={isPlaceOrderModalOpen} style={customStyles1}>
-                            <a onClick={() => this.placeOrderClose()} style={{float:"right"}}>+</a>
+                            <button className=" btn btn-light" style={{ float: "right" }} onClick={() => this.placeOrderClose()} className="btn btn-light closeBtn">&times;</button>
                             <p>We send your booking request to salon provider, If they comfirm your booking then we send you a payment link, you have to payment there</p>
                         </Modal>
                     </div>

@@ -8,7 +8,8 @@ import Buttom_Section from "../Components/Buttom_Section";
 import "../Styles/DetailsPage.css";
 import queryString from "query-string";
 import axios from "axios";
-
+import uuid from 'react-uuid'
+import validator from 'validator'
 const constants = require("../Constants");
 const API_URL = constants.API_URL;
 
@@ -39,7 +40,7 @@ class DetailsPage extends React.Component {
             .then(result => {
                 debugger;
                 const salon = result.data.salon;
-                this.setState({
+                this.setState({ 
                     salon: salon[0],
                     salonName: salon[0].name,
                     salonRating: salon[0].rating,
@@ -87,7 +88,82 @@ class DetailsPage extends React.Component {
     }
 
     bookAppoClicked=(id)=>{
-        
+      
+            // debugger
+             const { salonId, email, totalPrice, name, mobile, date, time, selectedServices,user } = this.state
+             // if (email.length == 0) {
+             //     window.alert("Enter email first!")
+             //     return;
+             // }
+             if (mobile.length == 0) {
+                 window.alert("Enter mobile no first!")
+                 return;
+             }
+             if (mobile.length < 10) {
+                 window.alert("Enter valid mobile no!")
+                 return;
+             }
+             if (salonId.length == 0) {
+                 window.alert("Select Salon first!")
+                 return
+             }
+             if (selectedServices.length == 0) {
+                 window.alert("Please select minimum one service!");
+                 return
+             }
+             if (!date) {
+                 window.alert("please select appo date first!")
+                 return
+             }
+             if (!time) {
+                 window.alert("please select appo time first!")
+                 return
+             }
+             let a = localStorage.getItem('user');
+             this.setState({ userDetails: JSON.parse(a) })
+             if (a) {
+                 this.setState({
+                     isLogin: true
+                 })
+                 console.log("login status changed!")
+                 debugger
+                 const reqData = {
+                     userId:email,
+                     salonId: salonId,
+                     orderStatus: "placed",
+                     totalPrice: totalPrice,
+                     userName: name,
+                     orderId: uuid(),
+                     date: date,
+                     time: time,
+                     orderDetails: selectedServices,
+                     payment:false,
+                     confirmBooking:"pending",
+                     mobile:mobile
+                 }
+                 axios({
+                     method: "POST",
+                     url: `${API_URL}/placeOrder`,
+                     //  headers : {"Content-Type" : "applicaton/json"},
+                     data: reqData
+                 })
+                     .then(result => {
+                         //   debugger;
+                         this.setState({
+                             isPlaceOrderModalOpen: true
+                         })
+                     })
+                     .catch(error => {
+                         console.log(error);
+                     });
+     
+             } else {
+                 window.alert("You have to login first!")
+                 this.setState({
+                     isLoginModalOpen: true
+                 })
+             }
+         
     }
     render() {
         // debugger
