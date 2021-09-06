@@ -10,7 +10,7 @@ class SalonAdminPage extends React.Component {
         super();
         this.state = {
             orders: [],
-            a:null
+            a: null
         }
     }
     componentDidMount = () => {
@@ -34,7 +34,7 @@ class SalonAdminPage extends React.Component {
             .then(result => {
 
                 this.setState({
-                    a:1
+                    a: 1
                 })
 
             })
@@ -42,29 +42,29 @@ class SalonAdminPage extends React.Component {
                 console.log(error);
             });
     }
-    denyClicked=(e)=>{
+    denyClicked = (e) => {
         axios.get(`${API_URL}/denyBooking/${e.target.value}`)
-        .then(result => {
+            .then(result => {
 
-            this.setState({
-                a:1
+                this.setState({
+                    a: 1
+                })
+
+
             })
-
-
-        })
-        .catch(error => {
-            console.log(error);
-        });
+            .catch(error => {
+                console.log(error);
+            });
     }
     render() {
         const { orders } = this.state;
         return (
 
             <div>
-                <Music/>
+                <Music />
                 <Header />
                 <div className="container">
-                    <h2 className="text-center">Notification</h2>
+                    <h2 className="text-center">Booking Details</h2>
                     {
                         orders.length > 0
                             ?
@@ -93,19 +93,36 @@ class SalonAdminPage extends React.Component {
                                             <div className="col-3 text-center">
                                                 <h5>Payment</h5>
                                                 {
-                                                 item.confirmBooking === "Accepted" 
-                                                 ?
-                                                 <h7>You accepted this booking, waiting for confirm payment</h7>
-                                                 :
-                                                 <h7>Waiting for your comfermation</h7>
+                                                    item.confirmBooking === "Accepted"
+                                                        ?
+                                                        <h7>You accepted this booking, waiting for confirm payment</h7>
+                                                        :
+                                                        item.confirmBooking === "pending"
+                                                            ?
+                                                            <h7>Waiting for your comfermation</h7>
+                                                            :
+                                                            item.confirmBooking === "confirm"
+                                                                ?
+                                                                <h7>Payment is done, Booking confirmed</h7>
+                                                                :
+                                                                <h7>Waiting for your comfermation</h7>
                                                 }
-                                               
+
                                             </div>
                                             <div className="col-3 text-center">
-                                                <button value={item.orderId} onClick={(e) => this.acceptClicked(e)}>Accept</button>
-                                                <br />
-                                                <br />
-                                                <button value={item.orderId} onClick={(e) => this.denyClicked(e)} > Deny</button>
+                                                {
+                                                    item.confirmBooking === "pending"
+                                                        ?
+                                                        <a>
+                                                            <button value={item.orderId} onClick={(e) => this.acceptClicked(e)}>Accept</button>
+                                                            <br />
+                                                            <br />
+                                                            <button value={item.orderId} onClick={(e) => this.denyClicked(e)} > Deny</button>
+                                                        </a>
+                                                        :
+                                                        <h7>Accepted</h7>
+                                                }
+
                                             </div>
                                         </div>
                                     </div>

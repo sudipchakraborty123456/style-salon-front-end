@@ -341,6 +341,83 @@ class Header extends React.Component {
                 console.log(error);
             });
     }
+    paymentClicked = (mobile, email, price, orderId) => {
+        debugger
+        if (this.state.isLoggedIn === "true") {
+            debugger
+            // let a = this.savedetails();
+            const data = {
+                amount: price,
+                email: email,
+                mobileNo: mobile,
+                orderId: orderId
+            }
+            this.getCheckSum(data).then(result => {
+                debugger
+                let information = {
+                    action: "https://securegw-stage.paytm.in/order/process",
+                    params: result
+                }
+                this.postTheInformation(information);
+            }).catch(err => console.log(err));
+        } else {
+            window.alert("Please Login First");
+            this.setState({ isLoginModalOpen: true });
+        }
+
+    }
+    stringifyValue(value) {
+        if (this.isObj(value) && !this.isDate(value)) {
+            return JSON.stringify(value);
+        } else {
+            return value;
+        }
+
+    }
+    isObj = (val) => {
+        return typeof val === 'object';
+
+    }
+    isDate = (val) => {
+        return Object.prototype.toString.call(val) === '[object Date]';
+    }
+
+    buildForm(details) {
+        const { action, params } = details;
+        const form = document.createElement('form');
+        form.setAttribute("method", "post");
+        form.setAttribute("action", action);
+
+        Object.keys(params).forEach(key => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', key);
+            input.setAttribute('value', this.stringifyValue(params[key]));
+            form.appendChild(input);
+        });
+        return form;
+    }
+
+    postTheInformation(details) {
+        const form = this.buildForm(details);
+        document.body.appendChild(form);
+        form.submit();
+        form.remove();
+    }
+    getCheckSum(data) {
+        //debugger;
+        return fetch(`${API_URL}/payment`, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                "Content-Type": 'application/json',
+            },
+            body: JSON.stringify(data)
+        }).then(result => {
+            return result.json();
+        }).catch(err => console.log(err))
+    }
+
     render() {
         //debugger
         const { orders, user, isMyProfileModalOpen, isBookingDetailsOpen, isLoginModalOpen, loginError, userName, password, isLoggedIn, isSingUpModalOpen, singUpError, firstName, lastName, city, locality, mobile } = this.state;
@@ -479,11 +556,20 @@ class Header extends React.Component {
                                                                         item.confirmBooking === "Accepted"
                                                                             ?
                                                                             <a>
-                                                                            <h7>Your booking was accepted, please complete payment</h7>
-                                                                            <button>Payment</button>
+                                                                                <h7>Your booking was accepted, please complete payment</h7>
+                                                                                <button onClick={() => this.paymentClicked(item.mobile, item.userId, item.totalPrice, item.orderId)}>Payment</button>
                                                                             </a>
                                                                             :
-                                                                            <h7>Waiting for your comfermation</h7>
+                                                                            item.confirmBooking === "confirm"
+                                                                                ?
+                                                                                <h7>Payment done succesfully</h7>
+                                                                                :
+                                                                                item.confirmBooking === "pending"
+                                                                                    ?
+                                                                                    <h7>waiting for confermation from salon</h7>
+                                                                                    :
+                                                                              <h7>Deny from salon, salon is booked on your selected time, you can try with another time</h7>
+
                                                                     }
                                                                 </div>
                                                                 <div className="col-3 text-center">
@@ -495,9 +581,13 @@ class Header extends React.Component {
                                                                             :
                                                                             item.confirmBooking === "Accepted"
                                                                                 ?
-                                                                                <h7 style={{ color: "green" }}>Booking Accepted</h7>
+                                                                                <h7 style={{ color: "#ffc107" }}>Booking Accepted</h7>
                                                                                 :
-                                                                                <h7 style={{ color: "red" }}>Booking Deny</h7>
+                                                                                item.confirmBooking === "confirm"
+                                                                                    ?
+                                                                                    <h7 style={{ color: "green" }}>Booking Confirm</h7>
+                                                                                    :
+                                                                                    <h7 style={{ color: "red" }}>Booking Deny</h7>
                                                                     }
                                                                 </div>
                                                             </div>
