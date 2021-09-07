@@ -130,7 +130,7 @@ class SalonAdminPage extends React.Component {
                                 )
                             })
                             :
-                            <a></a>
+                            <a>No booking details found !</a>
                     }
 
                 </div>

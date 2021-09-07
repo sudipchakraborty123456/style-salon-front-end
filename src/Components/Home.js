@@ -68,7 +68,7 @@ class Home extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <BookAppoForm />
+                    {/* <BookAppoForm /> */}
                 </div>
                 <Buttom_Section />
             </>

@@ -18,7 +18,8 @@ const customStyles = {
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
         "overflow-y": "auto",
-        "max-height": "80%"
+        "max-height": "80%",
+        "min-width":"60%"
     },
 };
 class Header extends React.Component {
@@ -528,6 +529,8 @@ class Header extends React.Component {
                                         {
                                             orders
                                                 ?
+                                                orders.length > 0
+                                                ?
 
                                                 orders.map((item, index) => {
                                                     return (
@@ -595,7 +598,9 @@ class Header extends React.Component {
                                                     )
                                                 })
                                                 :
-                                                <a></a>
+                                                <a>No booking details found</a>
+                                                :
+                                                <a>Loading...</a>
                                         }
 
                                     </div>

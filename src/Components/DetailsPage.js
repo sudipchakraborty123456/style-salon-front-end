@@ -26,10 +26,21 @@ const customStyles = {
         transform: 'translate(-50%, -50%)',
         boxShadow: '0 3px 6px 0 rgba(0, 0, 0, 0.16)',
         zIndex: '1000',
-        maxWidth:"500px",
-        width:"100%",
-        "margin-top":"5px"
-        }
+        maxWidth: "500px",
+        width: "100%",
+        "margin-top": "5px"
+    }
+};
+const customStyles1 = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        width:'54%'
+    },
 };
 class DetailsPage extends React.Component {
     constructor(props) {
@@ -45,7 +56,13 @@ class DetailsPage extends React.Component {
             city: "",
             locality: "",
             models: null,
-            isOrderDetailsModalOpen:false
+            isOrderDetailsModalOpen: false,
+            mobile: "",
+            totalPrice: 0,
+            selectedServices: [],
+            date: null,
+            time: null,
+            isPlaceOrderModalOpen:false
         }
     }
     componentDidMount = () => {
@@ -79,6 +96,7 @@ class DetailsPage extends React.Component {
             .catch(error => {
                 console.log(error);
             });
+
     }
     servicRender = (item) => {
         debugger
@@ -138,7 +156,8 @@ class DetailsPage extends React.Component {
             return
         }
         let a = localStorage.getItem('user');
-        this.setState({ userDetails: JSON.parse(a) })
+        a=JSON.parse(a)
+        this.setState({ userDetails:  a})
         if (a) {
             this.setState({
                 isLogin: true
@@ -146,11 +165,11 @@ class DetailsPage extends React.Component {
             console.log("login status changed!")
             debugger
             const reqData = {
-                userId: email,
+                userId: a.email,
                 salonId: salonId,
                 orderStatus: "placed",
                 totalPrice: totalPrice,
-                userName: name,
+                userName: a.firstName,
                 orderId: uuid(),
                 date: date,
                 time: time,
@@ -183,14 +202,73 @@ class DetailsPage extends React.Component {
         }
 
     }
-    bookAppoClicked=()=>{
+    bookAppoClicked = () => {
         this.setState({
-            isOrderDetailsModalOpen : true
+            isOrderDetailsModalOpen: true
         })
     }
-    render() {
+    orderDetailsModalClose = () => {
+        this.setState({
+            isOrderDetailsModalOpen: false
+        })
+    }
+    setValueForName = (e, field) => {
+        //debugger;
+
+        this.setState({
+            [field]: e.target.value
+
+        });
+        //console.log(this.state.field['name']);
+        // console.log(this.state.name);
+        // console.log(this.state.mobileNo);
+        // console.log(this.state.address);
+    }
+    serviceSelected = (e, p) => {
+        //   debugger
+        let total = this.state.totalPrice;
+
+        const selectedServices = this.state.selectedServices;
+        if (e.target.checked) {
+            let selectedServices = this.state.selectedServices
+            selectedServices.push(e.target.value)
+            total = total + p;
+            this.setState({
+                totalPrice: total,
+                selectedServices: selectedServices
+            })
+        } else {
+            let index = selectedServices.indexOf(e.target.value)
+            if (index != -1) {
+                selectedServices.splice(index, 1)
+                total = total - p
+                this.setState({
+                    totalPrice: total,
+                    selectedServices: selectedServices
+                })
+            }
+        }
+    }
+    dataChanged = (e) => {
+        this.setState({
+            date: e.target.value
+        })
+    }
+    timeChanged = (e) => {
         // debugger
-        const { isOrderDetailsModalOpen, salon, thumb, salonName, salonRating, min_price, phone, city, locality, models } = this.state;
+        this.setState({
+            time: e.target.value
+        })
+    }
+    placeOrderClose = () => {
+        this.setState({
+            isPlaceOrderModalOpen: false
+        })
+        this.props.history.push("/");
+    }
+    render() {
+       // debugger
+        const { isPlaceOrderModalOpen, isOrderDetailsModalOpen, salon, thumb, salonName, salonRating, min_price, phone, city, locality, models } = this.state;
 
         console.log(salon);
         return (
@@ -294,21 +372,59 @@ class DetailsPage extends React.Component {
                                 <Modal isOpen={isOrderDetailsModalOpen} style={customStyles}>
                                     <div className="container">
                                         <div >
-                                            <h3 className="heading2">{}</h3>
-                                            <button className=" btn btn-light" className="btn btn-light closeBtn">&times;</button>
+                                            <h1 className="heading2 text-center">Select Services</h1>
+                                            <button className=" btn btn-light" className="btn btn-light closeBtn" onClick={() => this.orderDetailsModalClose()}>&times;</button>
                                         </div>
                                         <div className="row">
-                                            <div className="subHading">Name</div>
-                                            <input className="inputField" type="text" placeholder="Enter your name" onChange={(e) => this.setValueForName(e, 'name')} />
-                                            <div className="subHading" required min="10">Mobile Number</div>
-                                            <input type="number" className="inputField" placeholder="Enter mobile number" onChange={(e) => this.setValueForName(e, 'mobileNo')} />
-                                            <div className="subHading" required>Address</div>
-                                            <input type="text" className="inputField" placeholder="Enter your address" onChange={(e) => this.setValueForName(e, 'address')} />
+                                            {
+                                                salon ?
+                                                    salon.services.map((item, index) => {
+                                                        return (
+                                                            <span className="">
+                                                                <h2  >{item.name}</h2>
+                                                                <ul key={index}>
+                                                                    {
+                                                                        item.service.map((item, index) => {
+                                                                            return (
+
+                                                                                <label className="d-block"><input type="checkBox" key={index} value={item.name} onChange={(e) => this.serviceSelected(e, item.price)} />{item.name}(&#x20b9; {item.price})</label>
+
+
+                                                                            )
+                                                                        })
+
+                                                                    }
+                                                                </ul>
+                                                            </span>
+                                                        )
+
+                                                    })
+                                                    :
+                                                    <a></a>
+                                            }
+                                            {/* <div className="subHading">Name</div>
+                                            <input className="inputField" type="text" placeholder="Enter your name" onChange={(e) => this.setValueForName(e, 'name')} /> */}
+                                            <span className="subHading" required min="10" style={{ "width": "auto" }}>Mobile Number</span>
+                                            <input type="number" className="inputField" placeholder="Enter mobile number" style={{ "width": "auto" }} onChange={(e) => this.setValueForName(e, 'mobile')} />
+                                            {/* <div className="subHading" required>Address</div>
+                                            <input type="text" className="inputField" placeholder="Enter your address" onChange={(e) => this.setValueForName(e, 'address')} /> */}
+                                            <div className="bottomBorder">
+                                                <span className="subHading" required >Select Date</span>
+                                                <input type="date" placeholder="Preferred Date" className="input " onChange={(e) => this.dataChanged(e)} />
+                                            </div>
+                                            <div className="bottomBorder">
+                                                <span className="subHading text-start" required min="10">Select Time</span>
+                                                <label><input type="time" min="07:00" max="22:00" onChange={(e) => this.timeChanged(e)} /></label>
+                                            </div>
                                         </div>
                                         <br />
-                                        <button className="btn btn-danger float-end" type="submit" value="submit" onClick={this.paymentHandeller}>Pay Now</button>
+                                        <button className="btn btn-danger float-end" type="submit" value="submit" onClick={this.bookingDetailsSend}>Pay Now</button>
 
                                     </div>
+                                </Modal>
+                                <Modal isOpen={isPlaceOrderModalOpen} style={customStyles1}>
+                                    <button className=" btn btn-light" style={{ float: "right" }} onClick={() => this.placeOrderClose()} className="btn btn-light closeBtn">&times;</button>
+                                    <p>We send your booking request to salon provider, If they comfirm your booking then we send you a payment link, you have to payment there</p>
                                 </Modal>
                             </div>
                             :

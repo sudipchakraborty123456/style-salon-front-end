@@ -151,6 +151,10 @@ class BookAppoForm extends React.Component {
             window.alert("Enter valid mobile no!")
             return;
         }
+        if (mobile.length > 10) {
+            window.alert("Enter valid mobile no!")
+            return;
+        }
         if (selectedSalonId.length == 0) {
             window.alert("Select Salon first!")
             return
@@ -544,7 +548,7 @@ class BookAppoForm extends React.Component {
                         </div> */}
                         <div className="bottomBorder">
                             <span><i class="material-icons">call</i></span>
-                            <input type="number" placeholder="Contact" className="input " onChange={(e) => this.mobileChanged(e)} />
+                            <input type="number" placeholder="Contact" className="input " max="10" onChange={(e) => this.mobileChanged(e)} />
                         </div>
                         {/* <div className="bottomBorder">
                             <span><i class="material-icons">email</i></span>
