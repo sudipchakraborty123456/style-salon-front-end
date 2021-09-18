@@ -373,7 +373,7 @@ class DetailsPage extends React.Component {
                                     <div className="container">
                                         <div >
                                             <h1 className="heading2 text-center">Select Services</h1>
-                                            <button className=" btn btn-light" className="btn btn-light closeBtn" onClick={() => this.orderDetailsModalClose()}>&times;</button>
+                                            <button className=" btn btn-light" className="btn btn-light closeBtn" onClick={() => this.orderDetailsModalClose()} style={   { position: "absolute",right: "22px",top: "26px"}}>&times;</button>
                                         </div>
                                         <div className="row">
                                             {

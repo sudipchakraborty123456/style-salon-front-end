@@ -172,62 +172,70 @@ class Header extends React.Component {
     handleLogin = () => {
         //  debugger
         const { userName, password, isLoggedIn } = this.state;
-        if (userName.length == 0) {
-            window.alert("Enter email first!")
-            return;
+        if(userName){
+            if (userName.length == 0) {
+                window.alert("Enter email first!")
+                return;
+            }
         }
+       if(password){
         if (password.length == 0) {
             window.alert("Enter password first!")
             return;
         }
+       }
+       
         const obj = {
             email: userName,
             password: password
         }
-        axios({
-            method: 'POST',
-            url: `${API_URL}/login`,
-            header: { 'Content-Type': 'application/json' },
-            data: obj
-        }).then(result => {
-            if (result.data.data == "This email is not exist") {
-                this.setState({
-                    loginError: 'This email is not exist, You have to signUp first !!'
-                });
-                return;
-            } else {
-                localStorage.setItem("user", JSON.stringify(result.data.user[0]));
-                localStorage.setItem("isLoggedIn", true);
-                debugger
-                if (result.data.user[0].type === "client") {
-                    localStorage.setItem("type", "client");
+        if(userName && password){
+            axios({
+                method: 'POST',
+                url: `${API_URL}/login`,
+                header: { 'Content-Type': 'application/json' },
+                data: obj
+            }).then(result => {
+                if (result.data.data == "This email is not exist") {
                     this.setState({
-                        user: result.data.user[0],
-                        isLoggedIn: true,
-                        loginError: undefined,
-                        type: "client"
+                        loginError: 'This email is not exist, You have to signUp first !!'
                     });
-                    this.resetLoginForm();
-
+                    return;
                 } else {
-                    localStorage.setItem("type", "salon");
-                    this.setState({
-                        user: result.data.user[0],
-                        isLoggedIn: true,
-                        loginError: undefined,
-                        type: "salon"
-                    });
-                    this.resetLoginForm();
-                    this.props.history.push("/salonAdmin");
+                    localStorage.setItem("user", JSON.stringify(result.data.user[0]));
+                    localStorage.setItem("isLoggedIn", true);
+                    debugger
+                    if (result.data.user[0].type === "client") {
+                        localStorage.setItem("type", "client");
+                        this.setState({
+                            user: result.data.user[0],
+                            isLoggedIn: true,
+                            loginError: undefined,
+                            type: "client"
+                        });
+                        this.resetLoginForm();
+    
+                    } else {
+                        localStorage.setItem("type", "salon");
+                        this.setState({
+                            user: result.data.user[0],
+                            isLoggedIn: true,
+                            loginError: undefined,
+                            type: "salon"
+                        });
+                        this.resetLoginForm();
+                        this.props.history.push("/salonAdmin");
+                    }
+    
                 }
-
-            }
-        }).catch(error => {
-            this.setState({
-                loginError: 'Password is wrong !!'
+            }).catch(error => {
+                this.setState({
+                    loginError: 'Password is wrong !!'
+                });
+                console.log(error);
             });
-            console.log(error);
-        });
+        }
+      
     }
 
     logout = () => {
@@ -449,7 +457,7 @@ class Header extends React.Component {
                         </div>
                         <div className="col-12 col-sm-12 col-mg-6 col-lg-4 my-2 d-none d-lg-block">
                             <div className="row">
-                                <span className=" col-4 fb"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-facebook" viewBox="0 0 16 16">
+                                <span className=" col-4 feb"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-facebook" viewBox="0 0 16 16">
                                     <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
                                 </svg></span>
                                 <span className=" col-4 tw">< svg className="social" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-twitter" viewBox="0 0 16 16">
@@ -640,8 +648,14 @@ class Header extends React.Component {
                                 />
                                 <br />
                                 <br />
+                                <div className="row">
+                                <div className="col-6 text-center">
                                 <input type="button" className="btn btn-primary" onClick={() => this.handleLogin()} value="Login" />
+                                </div>
+                                <div className="col-6 text-center">
                                 <input type="button" className="btn" onClick={() => this.resetLoginForm()} value="Cancel" />
+                                </div>
+                                </div>
                                 <br />
                                 <hr />
                                 <div className="text-center">
@@ -684,11 +698,18 @@ class Header extends React.Component {
                                 />
                                 <br />
                                 <br />
+                                <div className="row">
+                                <div className="col-6 text-center">
                                 <input type="button" className="btn btn-primary" onClick={this.handleSingUp} value="Sing Up" />
+                                </div>
+                                <div className="col-6 text-center">
                                 <input type="button" className="btn" onClick={this.resetSingUpForm} value="Cancel" />
+                                </div>
+                                </div>
+                               
                                 <br />
                                 <hr />
-                                <p className="dontHaveAccount">Already have an account? <a className="signUpA pointer" onClick={() => this.loginClicked()}>Login</a></p>
+                                <p className="dontHaveAccount text-center">Already have an account? <a className="signUpA pointer" onClick={() => this.loginClicked()}>Login</a></p>
                             </form>
                         </Modal>
                     </div>

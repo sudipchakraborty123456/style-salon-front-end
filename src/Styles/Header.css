@@ -62,7 +62,7 @@ padding:5px;
     width: 30px;
     height: 30px;
 }
-.fb:hover{
+.feb:hover{
     color: 	#4267B2
 }
 .tw:hover{
@@ -222,4 +222,25 @@ padding:5px;
   -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
   -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
   }
-  
+  .signUpA:hover{
+    cursor: pointer;
+  }
+  .fb {
+    background-color: #1877f2;
+    border: none;
+    border-radius: 6px;
+    font-size: 20px;
+    line-height: 48px;
+    padding: 0 16px;
+    width: 100%;
+    color: white;
+}
+.google {
+  opacity: 1 !important;
+  width: 100%;
+  color: black !important;
+  letter-spacing: 1px;
+  border-radius: 5px !important;
+  text-align: center;
+  font-size: 18px !important
+}
